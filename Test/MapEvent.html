@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>MapEvent</title>
+    <link rel="stylesheet" href="http://localhost/arcgis_js_api/library/3.18/dijit/themes/claro/claro.css"/>
+    <link rel="stylesheet" href="http://localhost/arcgis_js_api/library/3.18/esri/css/esri.css"/>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        #mapDiv {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="mapDiv" style=""></div>
+<script type="text/javascript" src="http://localhost/arcgis_js_api/library/3.18/init.js"></script>
+<script>
+    require(["esri/map",
+        "dojo/_base/connect",
+        "dojo/domReady!"], function (Map, Connect) {
+        var map = new Map("mapDiv", {
+            center: [-118, 34.5],
+            zoom: 8,
+            basemap: "topo"
+        });
+        //On Style Events 方式
+        var mapExtentChange = map.on("extent-change", changeHandler);
+        function changeHandler(evt){
+            var extent = evt.extent,zoomed = evt.levelChange;
+            // ... Do something ..
+
+            // in some cases, you may want to disconnect the event listener
+            mapExtentChange.remove();
+        }
+        //Connect Style Event方式
+        var mapExtentChange_connect = Connect.connect(map, "onExtentChange", changeHandler_connect);
+        function changeHandler_connect(extent, delta, levelChange, lod){
+            // ... Do something ...
+
+            // in some cases, you may want to disconnect the event listener
+            Connect.disconnect(mapExtentChange_connect);
+        }
+    });
+</script>
+</body>
+</html>

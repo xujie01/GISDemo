@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>GraphicsLayer</title>
+    <link rel="stylesheet" href="http://localhost/arcgis_js_api/library/3.18/dijit/themes/claro/claro.css"/>
+    <link rel="stylesheet" href="http://localhost/arcgis_js_api/library/3.18/esri/css/esri.css"/>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        #mapDiv {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="mapDiv" style=""></div>
+<script type="text/javascript" src="http://localhost/arcgis_js_api/library/3.18/init.js"></script>
+<script>
+    require(["esri/map",
+        "esri/layers/GraphicsLayer",
+        "esri/layers/FeatureLayer",
+        "esri/geometry/Extent",
+        "esri/SpatialReference",
+        "esri/tasks/query",
+        "esri/tasks/QueryTask",
+        "esri/graphic",
+        "esri/symbols/SimpleFillSymbol",
+        "esri/symbols/SimpleMarkerSymbol",
+        "esri/symbols/SimpleLineSymbol",
+        "dojo/domReady!"], function (Map,GraphicsLayer, FeatureLayer,Extent,SpatialReference,Query,QueryTask,Graphic,SimpleFillSymbol,SimpleMarkerSymbol,SimpleLineSymbol) {
+        var map = new Map("mapDiv", {
+            basemap: "hybrid",
+            center: [-82.44109, 35.6122],
+            zoom: 17
+        });
+        var graphicsLayer = new GraphicsLayer({ id: "GraphicsLayer" });
+        var featureLayer = new FeatureLayer(
+                "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0");
+        map.addLayer(featureLayer);
+        map.addLayer(graphicsLayer);
+        var geomerty = new Extent(-82.44109, 35.6122,-82.43109, 35.6222, new SpatialReference({ wkid: 4326 }));
+        console.log(JSON.stringify(geomerty))
+        var graphic = new Graphic(geomerty,new SimpleFillSymbol());
+        graphicsLayer.add(graphic);
+       map .on("click",function(){
+            var query = new Query();
+            query.multipatchOption = "xyFootprint";
+            query.outFields = ["*"];
+            query.returnGeometry = true;
+//           var graphics = graphicsLayer.graphics ;
+//           if(graphics.length  >  0){
+//               query.geomerty = graphics[0].geometry;
+//               query.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+//           }
+            query.geometry = geomerty ;
+            query.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+            query.outSpatialReference = map.spatialReference;
+            var queryTask = new QueryTask( "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0" );
+            queryTask.execute( query ).then(function(results) {
+                var len = results.features.length;
+                if (len > 0) {
+                    for (var i = 0; i < len; i++) {
+                        var feature = results.features[i];
+                        var symbol;
+                        switch (feature.geometry.type) {
+                            case "point":
+                            case "multipoint":
+                                symbol = new SimpleMarkerSymbol();
+                                break;
+                            case "polyline":
+                                symbol = new SimpleLineSymbol();
+                                break;
+                            default:
+                                symbol = new SimpleFillSymbol();
+                                break;
+                        }
+                        feature.symbol = symbol;
+                        graphicsLayer.add(feature);
+                    }
+                }else{
+                    alert("没有符合条件的数据！");
+                }
+            },function(error){
+                //错误信息
+                alert( error );
+            });
+        })
+
+    });
+</script>
+</body>
+</html>

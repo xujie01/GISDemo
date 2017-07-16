@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>ArcGISDynamicMapServiceLayer</title>
+    <link rel="stylesheet" href="http://localhost/arcgis_js_api/library/3.18/dijit/themes/claro/claro.css"/>
+    <link rel="stylesheet" href="http://localhost/arcgis_js_api/library/3.18/esri/css/esri.css"/>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        #mapDiv {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="mapDiv" style=""></div>
+<script type="text/javascript" src="http://localhost/arcgis_js_api/library/3.18/init.js"></script>
+<script>
+    require(["esri/map",
+        "esri/layers/ArcGISDynamicMapServiceLayer",
+        "dojo/domReady!"], function (Map, ArcGISDynamicMapServiceLayer) {
+        var map = new Map("mapDiv");
+        var layer = new ArcGISDynamicMapServiceLayer(
+                "http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Louisville/LOJIC_LandRecords_Louisville/MapServer"
+        );
+        map.addLayer(layer);
+    });
+</script>
+</body>
+</html>

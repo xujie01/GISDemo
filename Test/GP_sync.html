@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>GPtest</title>
+    <link rel="stylesheet" href="http://localhost/arcgis_js_api/library/3.18/dijit/themes/claro/claro.css"/>
+    <link rel="stylesheet" href="http://localhost/arcgis_js_api/library/3.18/esri/css/esri.css"/>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        #mapDiv {
+            width: 100%;
+            height: 100%;
+        }
+
+        #executeGP {
+            position: absolute;
+            right: 20px;
+            top: 20px;;
+        }
+    </style>
+</head>
+<body class="claro">
+<div id="mapDiv"></div>
+<button id="executeGP">执行GP服务(同步)</button>
+<script type="text/javascript" src="http://localhost/arcgis_js_api/library/3.18/init.js"></script>
+<script>
+    require(["esri/map",
+        "esri/tasks/Geoprocessor",
+        "esri/tasks/JobInfo",
+        "esri/layers/RasterLayer",
+        "esri/layers/GraphicsLayer",
+        "esri/symbols/SimpleFillSymbol",
+        "esri/symbols/SimpleMarkerSymbol",
+        "esri/symbols/SimpleLineSymbol",
+        "dojo/domReady!"], function (Map,Geoprocessor,JobInfo,RasterLayer,GraphicsLayer,SimpleFillSymbol,SimpleMarkerSymbol,SimpleLineSymbol) {
+        var map = new Map("mapDiv", {
+            center: [104.06,30.67],
+            zoom: 3,
+            basemap: "topo"
+        });
+        var gp ;
+        var graphicsLayer = new GraphicsLayer({ id: "GraphicsLayer" });
+        map.addLayer(graphicsLayer);
+        document.getElementById("executeGP").onclick = function(){
+            gp = new Geoprocessor("https://localhost:6443/arcgis/rest/services/train/Idwsync/GPServer/Idw");
+            gp.setOutputSpatialReference({wkid: 4326 });
+            var params = {};
+            gp.execute(params,executeResult);
+        }
+        function executeResult(results){
+            if(results.length > 0){
+                getFeatureData(results[1]);
+            }
+        }
+        function getFeatureData(result){
+            var features = result.value.features;
+            graphicsLayer.clear();
+            for (var i = 0 ; i < features.length ; i ++){
+                var feature = features[i];
+                var symbol;
+                switch (feature.geometry.type) {
+                    case "point":
+                    case "multipoint":
+                        symbol = new SimpleMarkerSymbol();
+                        break;
+                    case "polyline":
+                        symbol = new SimpleLineSymbol();
+                        break;
+                    default:
+                        symbol = new SimpleFillSymbol();
+                        break;
+                }
+                feature.symbol = symbol;
+                graphicsLayer.add(feature);
+            }
+        }
+    });
+</script>
+</body>
+</html>

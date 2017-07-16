@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>ArcGIS API for JavaScript 开发示例</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.21/esri/themes/calcite/dijit/calcite.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.21/esri/css/esri.css"/>
+    <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="libs/duallistbox/bootstrap-duallistbox.min.css"/>
+    <link rel="stylesheet" href="theme/base/css/base.css"/>
+</head>
+<body>
+<div style="position:relative;z-index:900">
+    <!-- toolbar -->
+    <nav id="esricdBar" class="navbar navbar-default" role="navigation" style="margin-bottom:0px;">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <span class="navbar-brand" href="#" style="color:#990000">ArcGIS API for JavaScript 开发示例</span>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <div class="navbar-right">
+                    <div class="esricd-geocoder">
+                        <div id="GeocoderDiv"></div>
+                    </div>
+                    <div class="esricd-toxy">
+                        <div class="input-group">
+                            <input node-type="toXyInput" type="text" class="form-control" value="102.7053,25.0305"
+                                   placeholder="格式为：经度,纬度">
+                            <span class="input-group-btn">
+                                <button node-type="toXyBtn" class="btn btn-default" type="button">定位</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <button id="zoomIn" node-type="zoomInBtn" type="button" class="btn btn-default navbar-btn">
+                            <img src="theme/base/images/icons/nav_zoomin.png"/>&nbsp;&nbsp;放大
+                        </button>
+                    </li>
+                    <li>
+                        <button id="zoomOut" node-type="zoomOutBtn" type="button" class="btn btn-default navbar-btn">
+                            <img src="theme/base/images/icons/nav_zoomout.png"/>&nbsp;&nbsp;缩小
+                        </button>
+                    </li>
+                    <li>
+                        <button id="pan" node-type="panBtn" type="button" class="btn btn-default navbar-btn">
+                            <img src="theme/base/images/icons/nav_pan.png"/>&nbsp;&nbsp;漫游
+                        </button>
+                    </li>
+                    <li>
+                        <button id="toolbarMeasureBtn" data-rel-panel="toolbarMeasurePanel" type="button"
+                                class="btn btn-default navbar-btn"><img src="theme/base/images/icons/measure.png">&nbsp;&nbsp;测量
+                        </button>
+                        <!--toolbar面板_测量工具-->
+                        <div id="toolbarMeasurePanel" data-rel-btn="toolbarMeasureBtn"
+                             class="panel panel-default esricd-bar-panel" style="width: 250px;">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">测量工具
+                                    <button node-type="hideBarPanel" type="button" class="close" data-dismiss="alert">
+                                        <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                                    </button>
+                                </h3>
+                            </div>
+                            <div class="panel-body">
+                                <div id="measurementDiv"></div>
+                            </div>
+                        </div>
+                        <!--toolbar面板 end-->
+                    </li>
+                    <li>
+                        <button id="toolbarBookmarkBtn" data-rel-panel="toolbarBookmarkPanel" type="button"
+                                class="btn btn-default navbar-btn"><img src="theme/base/images/icons/bookmark.png">&nbsp;&nbsp;书签
+                        </button>
+                        <!--toolbar面板_书签-->
+                        <div id="toolbarBookmarkPanel" data-rel-btn="toolbarBookmarkBtn"
+                             class="panel panel-default esricd-bar-panel" style="width: 260px;">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">书签
+                                    <button node-type="hideBarPanel" type="button" class="close" data-dismiss="alert">
+                                        <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                                    </button>
+                                </h3>
+                            </div>
+                            <div class="panel-body">
+                                <div id="bookmarkDiv"></div>
+                            </div>
+                        </div>
+                        <!--toolbar面板 end-->
+                    </li>
+                    <li>
+                        <button id="toolbarPrintBtn" data-rel-panel="toolbarPrintPanel" type="button"
+                                class="btn btn-default navbar-btn"><img src="theme/base/images/icons/printer.png">&nbsp;&nbsp;打印
+                        </button>
+                        <!--&lt;!&ndash;toolbar面板_空间查询&ndash;&gt;-->
+                        <div id="toolbarPrintPanel" data-rel-btn="toolbarPrintBtn"
+                             class="panel panel-default esricd-bar-panel" style="width: 260px;">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">打印地图
+                                    <button node-type="hideBarPanel" type="button" class="close" data-dismiss="alert">
+                                        <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                                    </button>
+                                </h3>
+                            </div>
+                            <div class="panel-body">
+                                <div id="print">
+                                </div>
+                            </div>
+                        </div>
+
+                    </li>
+                    <li>
+                        <button id="toolbarDrawBtn" data-rel-panel="toolbarDrawPanel" type="button"
+                                class="btn btn-default navbar-btn"><img src="theme/base/images/icons/draw.png">&nbsp;&nbsp;绘制编辑
+                        </button>
+                        <!--&lt;!&ndash;toolbar面板_空间查询&ndash;&gt;-->
+                        <div id="toolbarDrawPanel" data-rel-btn="toolbarDrawBtn"
+                             class="panel panel-default esricd-bar-panel" style="width: 280px;">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">动态绘制编辑
+                                    <button node-type="hideBarPanel" type="button" class="close" data-dismiss="alert">
+                                        <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                                    </button>
+                                </h3>
+                            </div>
+                            <div class="panel-body">
+                                <button node-type="drawBtn" type="button" class="btn btn-default">Point</button>
+                                <button node-type="drawBtn" type="button" class="btn btn-default">Multi Point</button>
+                                <button node-type="drawBtn" type="button" class="btn btn-default">Line</button>
+                                <button node-type="drawBtn" type="button" class="btn btn-default">Polyline</button>
+                                <button node-type="drawBtn" type="button" class="btn btn-default">Polygon</button>
+
+
+                                <button node-type="drawBtn" type="button" class="btn btn-default">Arrow</button>
+                                <button node-type="drawBtn" type="button" class="btn btn-default">Triangle</button>
+                                <button node-type="drawBtn" type="button" class="btn btn-default">Circle</button>
+                                <button node-type="drawBtn" type="button" class="btn btn-default">Ellipse</button>
+
+
+                                <button node-type="drawBtn" type="button" class="btn btn-default">Freehand Polyline
+                                </button>
+
+                                <button node-type="drawBtn" type="button" class="btn btn-default">Freehand Polygon
+                                </button>
+                                <button node-type="drawBtn" type="button" class="btn btn-default">清空</button>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- toolbar end -->
+</div>
+
+<!--面板手柄-->
+<div style="top:60px;" node-type="showPanel" data-for="queryTaskPanel"
+     class="esricd-panel-handler esricd-handler-right">
+    <div class="esricd-panel-handler-title">
+        <img src="theme/base/images/icons/find.png"/> 单图层查询
+    </div>
+</div>
+<div style="top:180px" node-type="showPanel" data-for="findTaskPanel" class="esricd-panel-handler esricd-handler-right">
+    <div class="esricd-panel-handler-title">
+        <img src="theme/base/images/icons/find.png"/> 多图层查询
+    </div>
+</div>
+<div style="top:300px" node-type="showPanel" data-for="identifyTaskPanel"
+     class="esricd-panel-handler esricd-handler-right">
+    <div class="esricd-panel-handler-title">
+        <img src="theme/base/images/icons/find.png"/> 多几何查询
+    </div>
+</div>
+<!--面板手柄 end-->
+<div style="right:-300px;" id="queryTaskPanel"
+     class="panel panel-default panel-primary esricd-panel esricd-panel-right">
+    <div class="panel-heading">
+        <h3 class="panel-title">单图层查询 -- QueryTask
+            <button node-type="hidePanel" type="button" class="close" data-dismiss="alert"><span
+                    aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        </h3>
+    </div>
+    <div class="panel-body esricd-panel-scroll-auto">
+        <div id="queryTaskDiv">
+            <div class="alert alert-info" role="alert">loading...</div>
+        </div>
+
+    </div>
+</div>
+
+<div style="right:-300px;" id="findTaskPanel" class="panel panel-default panel-primary esricd-panel esricd-panel-right">
+    <div class="panel-heading">
+        <h3 class="panel-title">多图层查询 -- FindTask
+            <button node-type="hidePanel" type="button" class="close" data-dismiss="alert"><span
+                    aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        </h3>
+    </div>
+    <div class="panel-body esricd-panel-scroll-auto">
+        <div id="findTaskDiv">
+            <div class="alert alert-info" role="alert">loading...</div>
+        </div>
+
+    </div>
+</div>
+
+<div style="right:-300px;" id="identifyTaskPanel"
+     class="panel panel-default panel-primary esricd-panel esricd-panel-right">
+    <div class="panel-heading">
+        <h3 class="panel-title">多图层几何查询 -- IdentifyTask
+            <button node-type="hidePanel" type="button" class="close" data-dismiss="alert"><span
+                    aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        </h3>
+    </div>
+    <div class="panel-body esricd-panel-scroll-auto">
+        <div id="identifyTaskDiv">
+            <div class="alert alert-info" role="alert">loading...</div>
+        </div>
+
+    </div>
+</div>
+
+<!--消息提示框-->
+<div id="msgbox" class="esricd-msg-box">
+
+</div>
+
+<div id="mapDiv" style="position:relative;">
+    <div id="HomeButton"></div>
+    <div id="LocateButton"></div>
+    <div id="swipeDiv"></div>
+</div>
+<script src="libs/jquery/jquery-1.11.1.min.js"></script>
+<script src="libs/bootstrap/js/bootstrap.min.js"></script>
+<script src="libs/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+<script src="libs/baiduTemplate/baiduTemplate.js"></script>
+<script src="config/dojoConfig.js"></script>
+<script src="https://js.arcgis.com/3.21/"></script>
+<script>
+    var myApp;
+    require(["app/main", "dojo/domReady!"], function (Main) {
+        myApp = new Main();
+        myApp.startup();
+    });
+</script>
+</body>
+</html>

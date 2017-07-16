@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>ArcGISDynamicMapServiceLayer</title>
+    <link rel="stylesheet" href="http://localhost/arcgis_js_api/library/3.18/dijit/themes/claro/claro.css"/>
+    <link rel="stylesheet" href="http://localhost/arcgis_js_api/library/3.18/esri/css/esri.css"/>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        #mapDiv {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="mapDiv" style=""></div>
+<script type="text/javascript" src="http://localhost/arcgis_js_api/library/3.18/init.js"></script>
+<script>
+    require(["esri/map",
+        "esri/InfoTemplate",
+        "esri/layers/FeatureLayer",
+        "esri/symbols/SimpleMarkerSymbol",
+        "esri/symbols/SimpleLineSymbol",
+        "esri/Color",
+        "esri/renderers/SimpleRenderer",
+        "dojo/domReady!"], function (Map, InfoTemplate,FeatureLayer,SimpleMarkerSymbol,SimpleLineSymbol,Color,SimpleRenderer) {
+        var map = new Map("mapDiv", {
+            basemap: "topo",
+            center: [112, 34.5],
+            zoom: 5
+        });
+        var infoTemplate = new InfoTemplate("${NAME}", "${*}");
+        var featureLayer = new FeatureLayer(
+                "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/ArcGIS/rest/services/WorldCities/FeatureServer/0",
+                {
+                    mode: FeatureLayer.MODE_ONDEMAND,
+                    outFields: ["*"],
+                    infoTemplate: infoTemplate
+                }
+        );
+
+        var simpleSymbol = new SimpleMarkerSymbol(
+                SimpleMarkerSymbol.STYLE_X,
+                12,
+                new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,new Color([255, 0, 0]), 2),new Color([0, 255, 0, 0.25])
+        );
+        var renderer = new SimpleRenderer(simpleSymbol);
+        featureLayer.setDefinitionExpression("adm = 'China'");
+        featureLayer.setRenderer(renderer);
+        map.addLayer(featureLayer);
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<div>
+    <div class="well"><strong>选择图层:</strong></div>
+        <% for(var i =0 ; i < task_data.itemData.length ; i ++){
+        var o = task_data.itemData[i];
+        %>
+        <div node-type="layers"  class="checkbox">
+            <label>
+                <input node-type="layer" node-data="<%=o.index%>" type="checkbox"><%=o.title%>
+            </label>
+        </div>
+        <% } %>
+</div>
+
+<div class="well"><strong>选择字段:</strong></div>
+<div node-type="fieldSelectDiv" class="esricd-line">
+    <select node-type="fieldSelect" multiple="multiple" size="4"></select>
+</div>
+
+<div class="well" style="float: left;width: 100%;"><strong>搜索文本:</strong></div>
+<input style="width:100%;" node-type="searchValue" class="form-control input-sm esricdInputXs"/>
+
+<div class="esricd-line">
+    <button node-type="find" type="button" class="btn btn-primary center-block">查询</button>
+</div>
+<div node-type="findResult" class="list-group"></div>

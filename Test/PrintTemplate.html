@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>PrintTemplate</title>
+    <link rel="stylesheet" href="http://localhost/arcgis_js_api/library/3.18/dijit/themes/claro/claro.css"/>
+    <link rel="stylesheet" href="http://localhost/arcgis_js_api/library/3.18/esri/css/esri.css"/>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        #mapDiv {
+            width: 100%;
+            height: 100%;
+        }
+
+        #printBtn {
+            position: absolute;
+            right: 20px;
+            top: 20px;;
+        }
+    </style>
+</head>
+<body class="claro">
+<div id="mapDiv"></div>
+<button id="printBtn">打印地图</button>
+<script type="text/javascript" src="http://localhost/arcgis_js_api/library/3.18/init.js"></script>
+<script>
+    require(["esri/map",
+        "esri/tasks/PrintParameters",
+        "esri/tasks/PrintTask",
+        "dojo/domReady!"], function (Map, PrintParameters,PrintTask) {
+        var map = new Map("mapDiv", {
+            center: [-118, 34.5],
+            zoom: 8,
+            basemap: "topo"
+        });
+
+        document.getElementById("printBtn").onclick = function(){
+            var printTask = new PrintTask(
+                    "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task");
+            var params = new PrintParameters();
+            params.map = map ;
+            params.template = {
+                layout: "Letter ANSI A Landscape",
+                label: "Landscape (PDF)",
+                format: "pdf",
+                layoutOptions: {
+                    legendLayers: [], // empty array means no legend
+                    scalebarUnit: "Miles",
+                    titleText: "This is my first PrintMap"
+                }
+            };
+            printTask.execute(params,printComplete,err);
+
+            function printComplete(result){
+                window.open(result.url);
+            }
+            function err(message){
+                alert("服务器开了个小差，请重试");
+            }
+        }
+    });
+</script>
+</body>
+</html>

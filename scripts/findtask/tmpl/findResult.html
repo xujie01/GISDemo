@@ -1,0 +1,9 @@
+<% for(var i=0; i< features.length ; i++){
+var o= features[i];
+%>
+<a href="#" node-type="resultItem" class="list-group-item">
+     <h4 class="list-group-item-heading">图层名称：<%=o.layerName%></h4>
+      <p class="list-group-item-text">查询到的字段：<%=o.foundFieldName%></p>
+    <p class="list-group-item-text">属性值：<%=o.value%></p>
+    </a>
+<% } %>

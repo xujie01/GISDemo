@@ -1,0 +1,8 @@
+<% for(var i=0; i< features.length ; i++){
+var o= features[i];
+%>
+<a href="#" node-type="resultItem" class="list-group-item" data-oid="<%=o.attributes.objectid%>">
+     <h4 class="list-group-item-heading">名称：<%=o.attributes.Name%><%=o.attributes.name%><%=o.attributes.NAME%></h4>
+      <p class="list-group-item-text">OBJECTID：<%=o.attributes.OBJECTID%></p>
+    </a>
+<% } %>

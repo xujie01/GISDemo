@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>GraphicsLayer</title>
+    <link rel="stylesheet" href="http://localhost/arcgis_js_api/library/3.18/dijit/themes/claro/claro.css"/>
+    <link rel="stylesheet" href="http://localhost/arcgis_js_api/library/3.18/esri/css/esri.css"/>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        #mapDiv {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="mapDiv" style=""></div>
+<script type="text/javascript" src="http://localhost/arcgis_js_api/library/3.18/init.js"></script>
+<script>
+    require(["esri/map",
+        "esri/layers/GraphicsLayer",
+        "esri/geometry/Point",
+        "esri/SpatialReference",
+        "esri/symbols/PictureMarkerSymbol",
+        "esri/InfoTemplate",
+        "esri/graphic",
+        "dojo/domReady!"], function (Map, GraphicsLayer,Point,SpatialReference,PictureMarkerSymbol,InfoTemplate,Graphic) {
+        var map = new Map("mapDiv", {
+            basemap: "topo",
+            center: [116.596664, 40.071667],
+            zoom: 10
+        });
+        var graphicsLayer = new GraphicsLayer({ id: "GraphicsLayer" });
+        map.addLayer(graphicsLayer);
+        var geomerty = new Point(116.596664, 40.071667, new SpatialReference({ wkid: 4326 }));
+        var symbol = new PictureMarkerSymbol("Airport.png",16,16);
+        var attribute = {Name:"北京首都机场",City:"北京",Longitude:116.596664,Latitude:40.071667} ;
+        var infotemplate = InfoTemplate("${Name}","城市：${City}<br/>经度：${Longitude}<br/>纬度：${Latitude}");
+        var graphic = new Graphic(geomerty,symbol,attribute,infotemplate,true);
+        graphicsLayer.add(graphic);
+    });
+</script>
+</body>
+</html>

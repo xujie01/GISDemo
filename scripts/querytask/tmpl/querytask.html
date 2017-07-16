@@ -1,0 +1,53 @@
+<div>
+    <div class="well"><strong>选择图层:</strong></div>
+    <select node-type="findLayerSelect" class="form-control input-sm">
+        <% for(var i =0 ; i < task_data.itemData.length ; i ++){
+        var o = task_data.itemData[i];
+        %>
+        <option value="<%=task_data.baseUrl + o.index%>"><%=o.title%></option>
+        <% } %>
+    </select>
+</div>
+
+<div class="well"><strong>属性查询:</strong></div>
+
+<div class="esricd-line">
+    匹配以下
+    <select node-type="findRulesUnion" class="form-control input-sm esricdSelectXs">
+    <option value="and">全部</option>
+    <option value="or">任一</option>
+</select>属性规则：
+
+</div>
+<div node-type="rulesAboutDiv"><!--跟随图层变化-->
+</div>
+
+<div class="esricd-line">
+    <button node-type="addRole" type="button" class="btn btn-default btn-xs">
+        <span class="glyphicon glyphicon-plus"></span>添加规则
+    </button>
+</div>
+<div class="well"><strong>几何查询:</strong></div>
+<div class="esricd-line">
+    匹配以下几何规则：
+    </br>
+
+    <button node-type="geomertyRule" type="button" class="btn btn-default btn-sm">
+        <span class="glyphicon glyphicon glyphicon-pencil"></span>
+        Rectangle
+    </button>
+
+    <button node-type="geomertyRule" type="button" class="btn btn-default btn-sm">
+        <span class="glyphicon glyphicon glyphicon-pencil"></span>
+        Ellipse
+    </button>
+
+    <button node-type="geomertyRule" type="button" class="btn btn-default btn-sm">
+        <span class="glyphicon glyphicon glyphicon-pencil"></span>
+        清空
+    </button>
+</div>
+<div class="esricd-line">
+    <button node-type="find" type="button" class="btn btn-primary center-block">查询</button>
+</div>
+<div node-type="queryResult" class="list-group"></div>
